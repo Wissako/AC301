@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class ClienteDaoImpl implements IClienteDAO {
-    private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("Persistencia");
+    private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("VentasUnidadPersistencia");
 
     @Override
     public Optional<Cliente> getClienteByDni(String dni) {
