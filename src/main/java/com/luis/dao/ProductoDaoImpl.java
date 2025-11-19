@@ -9,7 +9,11 @@ import jakarta.persistence.Persistence;
 import java.util.List;
 
 public class ProductoDaoImpl implements IProductoDAO {
-    private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("Persistencia");
+    private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("VentasUnidadPersistencia");
+
+
+
+
     @Override
     public List<Producto> getAll() {
        try(EntityManager em = emf.createEntityManager()){
@@ -22,7 +26,10 @@ public class ProductoDaoImpl implements IProductoDAO {
 
     @Override
     public Producto findById(Integer id) {
-        return null;
+        try(EntityManager em= emf.createEntityManager()){
+           return em.find(Producto.class,id);
+        }
+
     }
 
     @Override
@@ -50,5 +57,13 @@ public class ProductoDaoImpl implements IProductoDAO {
         em.persist(obj);
         em.getTransaction().commit();
     }
+    }
+    @Override
+    public List<Producto> obtenerConStockBajo(){
+        String query = "SELECT p FROM Producto p WHERE p.existencias < p.stockMinimo";
+        try(EntityManager em = emf.createEntityManager()){
+            return em.createQuery(query, Producto.class)
+                    .getResultList();
+        }
     }
 }

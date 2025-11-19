@@ -5,15 +5,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 @Builder
 @AllArgsConstructor
@@ -46,7 +42,8 @@ public class Venta {
     @Column(name = "notas", length = 500)
     private String notas;
 
-    @OneToMany(mappedBy = "venta")
-    private List<LineasVenta> lineasVentas = new ArrayList<>();
+    @OneToMany(mappedBy = "venta",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<DetalleVenta> detalleVentas = new ArrayList<>();
+
 
 }

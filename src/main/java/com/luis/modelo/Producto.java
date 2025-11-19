@@ -1,6 +1,7 @@
 package com.luis.modelo;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -8,9 +9,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 @Builder
 @AllArgsConstructor
@@ -28,7 +27,7 @@ public class Producto {
 
     @Size(max = 50)
     @NotNull
-    @Column(name = "codigo", nullable = false, length = 50)
+    @Column(name = "codigo", nullable = false, length = 50,unique = true)
     private String codigo;
 
     @Size(max = 255)
@@ -37,16 +36,26 @@ public class Producto {
     private String descripcion;
 
     @NotNull
+    @Min(value=0, message = "El precio no puede ser negativo")
     @Column(name = "precio_recomendado", nullable = false, precision = 12, scale = 2)
     private BigDecimal precioRecomendado;
 
     @NotNull
-    @ColumnDefault("0")
+    @Min(value=0, message = "Las existencias no pueden ser negativas")
     @Column(name = "existencias", nullable = false)
     private Integer existencias;
+
+    @Min(value = 0, message = "El stock mínimo no puede ser negativo")
+    @NotNull
+    @ColumnDefault("15")
+    @Column(name = "stock_minimo", nullable = false)
+    private Integer stockMinimo;
+
+
+
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "producto")
-    private List<LineasVenta> lineasVentas = new ArrayList<>();
+    private List<DetalleVenta> detalleVentas = new ArrayList<>();
 
 }

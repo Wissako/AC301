@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 @Setter
 @Entity
 @Table(name = "lineas_venta")
-public class LineasVenta {
+public class DetalleVenta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
