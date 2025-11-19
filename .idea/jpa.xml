@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JpaBuddyIdeaProjectConfig" ddlLastScriptDirectoryPath="">
+    <option name="reLastEntityCreationPackage" value="src/main/java/com/luis/modelo" />
+    <option name="reverseEngineeringLastDbConnectionId" value="f6395e02-2052-40bb-9f1a-8951ca04afc0" />
+  </component>
+  <component name="JpaPluginProjectSettings">
+    <option name="entityNameTemplate" />
+    <option name="isLombokBuilder" value="true" />
+    <option name="isLombokAllArgsConstructor" value="true" />
+    <option name="isLombokNoArgsConstructor" value="true" />
+    <option name="scaffoldingLanguage" />
+  </component>
+</project>
