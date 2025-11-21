@@ -14,27 +14,23 @@ public class ClienteDaoImpl implements IClienteDAO {
     private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("VentasUnidadPersistencia");
 
     @Override
-    public Optional<Cliente> getClienteByDni(String dni) {
+    public Cliente getClienteByDni(String dni) {
         String query = "select c from Cliente c where c.dni = :dni";
         try (EntityManager em = emf.createEntityManager();) {
 
             return em.createQuery(query, Cliente.class)
                     .setParameter("dni", dni)
-                    .getResultList()
-                    .stream()
-                    .findFirst();
+                    .getSingleResult();
         }
     }
 
     @Override
-    public Optional<Cliente> getClienteByName(String nombre) {
+    public Cliente getClienteByName(String nombre) {
         String query = "select c from Cliente c where c.nombre LIKE :nombre";
         try (EntityManager em = emf.createEntityManager();) {
             return em.createQuery(query, Cliente.class)
                     .setParameter("nombre", nombre)
-                    .getResultList()
-                    .stream()
-                    .findFirst();
+                    .getSingleResult();
         }
     }
 
@@ -55,10 +51,8 @@ public class ClienteDaoImpl implements IClienteDAO {
 
             return em.createQuery(query, Cliente.class)
                     .setParameter("id", id)
-                    .getResultList()
-                    .stream()
-                    .findFirst()
-                    .orElse(null);
+                    .getSingleResult();
+
         }
     }
 

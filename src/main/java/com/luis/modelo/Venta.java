@@ -42,8 +42,16 @@ public class Venta {
     @Column(name = "notas", length = 500)
     private String notas;
 
+    @NotNull
+    @Column(name = "estado",nullable = false)
+    @ColumnDefault("'PENDIENTE'")
+    private String estado;
+
     @OneToMany(mappedBy = "venta",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<DetalleVenta> detalleVentas = new ArrayList<>();
 
-
+    public void addDetalle(DetalleVenta detalles) {
+        detalleVentas.add(detalles);
+        detalles.setVenta(this);
+    }
 }

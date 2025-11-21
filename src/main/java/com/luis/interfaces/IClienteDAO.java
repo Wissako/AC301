@@ -5,7 +5,7 @@ import com.luis.modelo.Cliente;
 import java.util.Optional;
 
 public interface IClienteDAO extends ICrudDAO<Cliente> {
-Optional<Cliente> getClienteByDni(String dni);
-Optional<Cliente> getClienteByName(String nombre);
+Cliente getClienteByDni(String dni);
+Cliente getClienteByName(String nombre);
 
 }
