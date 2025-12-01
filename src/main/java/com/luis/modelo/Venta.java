@@ -17,6 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@ToString
 @Table(name = "ventas")
 public class Venta {
     @Id
@@ -44,13 +45,20 @@ public class Venta {
 
     @NotNull
     @Column(name = "estado",nullable = false)
+
     @ColumnDefault("'PENDIENTE'")
     private String estado;
 
+    @Builder.Default
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "venta",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<DetalleVenta> detalleVentas = new ArrayList<>();
 
     public void addDetalle(DetalleVenta detalles) {
+        if(detalleVentas == null){
+            detalleVentas = new ArrayList<>();
+        }
         detalleVentas.add(detalles);
         detalles.setVenta(this);
     }

@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface IVentaDAO extends ICrudDAO<Venta> {
     List<Venta> obtenerPorCliente(Long clienteId);
-
+    Optional<List<Venta>> ventasMayores();
     BigDecimal calcularTotalVentasDia(LocalDate fecha);
 }
