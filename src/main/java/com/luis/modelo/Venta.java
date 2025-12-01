@@ -47,10 +47,14 @@ public class Venta {
     @ColumnDefault("'PENDIENTE'")
     private String estado;
 
+    @Builder.Default
     @OneToMany(mappedBy = "venta",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<DetalleVenta> detalleVentas = new ArrayList<>();
 
     public void addDetalle(DetalleVenta detalles) {
+        if(detalleVentas == null){
+            detalleVentas = new ArrayList<>();
+        }
         detalleVentas.add(detalles);
         detalles.setVenta(this);
     }

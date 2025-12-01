@@ -1,18 +1,17 @@
 package com.luis.dao;
 
+import com.luis.Main;
 import com.luis.interfaces.IVentaDAO;
 import com.luis.modelo.Venta;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
 public class VentaDaoImpl implements IVentaDAO {
-    public static EntityManagerFactory emf = Persistence.createEntityManagerFactory("VentasUnidadPersistencia");
-
+    EntityManagerFactory emf = Main.emf;
 
     @Override
     public List<Venta> getAll() {
@@ -66,13 +65,12 @@ public class VentaDaoImpl implements IVentaDAO {
             em.persist(obj);
             em.getTransaction().commit();
         }
-
     }
 
     @Override
     public List<Venta> obtenerPorCliente(Long clienteId) {
         String query = "SELECT DISTINCT v FROM Venta v " +
-                "LEFT JOIN FETCH v.detalles d " +
+                "LEFT JOIN FETCH v.detalleVentas d " +
                 "LEFT JOIN FETCH d.producto " +
                 "WHERE v.cliente.id = :clienteId";
 

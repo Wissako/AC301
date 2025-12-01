@@ -1,5 +1,6 @@
 package com.luis.dao;
 
+import com.luis.Main;
 import com.luis.interfaces.IClienteDAO;
 import com.luis.modelo.Cliente;
 import jakarta.persistence.EntityManager;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class ClienteDaoImpl implements IClienteDAO {
-    private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("VentasUnidadPersistencia");
+    EntityManagerFactory emf = Main.emf;
 
     @Override
     public Cliente getClienteByDni(String dni) {

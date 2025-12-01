@@ -1,5 +1,6 @@
 package com.luis.dao;
 
+import com.luis.Main;
 import com.luis.interfaces.IProductoDAO;
 import com.luis.modelo.Producto;
 import jakarta.persistence.EntityManager;
@@ -9,7 +10,7 @@ import jakarta.persistence.Persistence;
 import java.util.List;
 
 public class ProductoDaoImpl implements IProductoDAO {
-    private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("VentasUnidadPersistencia");
+    EntityManagerFactory emf = Main.emf;
 
 
 

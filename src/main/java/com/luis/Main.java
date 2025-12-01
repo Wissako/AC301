@@ -8,6 +8,8 @@ import com.luis.modelo.DetalleVenta;
 import com.luis.modelo.Producto;
 import com.luis.modelo.Venta;
 import com.luis.service.VentaService;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -15,7 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class Main {
-
+    public static EntityManagerFactory emf = Persistence.createEntityManagerFactory("VentasUnidadPersistencia");
     private static ClienteDaoImpl clienteDao = new ClienteDaoImpl();
     private static ProductoDaoImpl productoDao = new ProductoDaoImpl();
     private static VentaDaoImpl ventaDao = new VentaDaoImpl();
@@ -36,7 +38,7 @@ public class Main {
                 "═══════════════════════════════════════════════════════════\n" +
                 "TAREA 1: CONFIGURACIÓN Y MODELO JPA\n" +
                 "═══════════════════════════════════════════════════════════");
-        crearDatos();
+       // crearDatos();
 
         // Tarea 2.1: Búsquedas fundamentales
         System.out.println("\n" +
@@ -83,7 +85,7 @@ public class Main {
         System.out.println("\n✅ PROGRAMA FINALIZADO\n");
     }
 
-    private static void crearDatos() {
+   private static void crearDatos() {
         System.out.println("\n1️⃣  Creando Cliente...");
         Cliente cliente = Cliente.builder()
                 .dni("12345678A")
@@ -154,15 +156,23 @@ public class Main {
     }
 
     private static void busquedas() {
-        System.out.println("🔍 Búsqueda por DNI (12345678A):");
-        clienteDao.getClienteByDni("12345678A")
-                .ifPresent(c -> System.out.println("  ✓ " + c.getNombre() + " " + c.getApellidos()));
+        try {
+            System.out.println(" Búsqueda por DNI (12345678A):");
+            Cliente clienteDni = clienteDao.getClienteByDni("12345678A");
+            System.out.println("  ✓ " + clienteDni.getNombre() + " " + clienteDni.getApellidos());
+        } catch (Exception e) {
+            System.out.println("  ✗ Error: " + e.getMessage());
+        }
 
-        System.out.println("\n🔍 Búsqueda por Nombre (Juan):");
-        clienteDao.getClienteByName("Juan")
-                .ifPresent(c -> System.out.println("  ✓ " + c));
+        try {
+            System.out.println("\n Búsqueda por Nombre (Juan):");
+            Cliente clienteNombre = clienteDao.getClienteByName("Juan");
+            System.out.println("  ✓ " + clienteNombre);
+        } catch (Exception e) {
+            System.out.println("  ✗ Error: " + e.getMessage());
+        }
 
-        System.out.println("\n🔍 Todos los clientes:");
+        System.out.println("\n Todos los clientes:");
         clienteDao.getAll().forEach(c -> System.out.println("  • " + c.getNombre()));
     }
 
@@ -172,45 +182,50 @@ public class Main {
         List<Venta> ventas = ventaDao.obtenerPorCliente(1L);
         ventas.forEach(v -> {
             System.out.println("  Venta ID: " + v.getId() + " | Estado: " + v.getEstado());
-            v.getDetalles().forEach(d ->
+            v.getDetalleVentas().forEach(d ->
                     System.out.println("    └─ " + d.getProducto().getCodigo() + " x" + d.getCantidad())
             );
         });
     }
 
     private static void consultasAgregacion() {
-        System.out.println("📊 Productos con stock bajo (< stockMinimo):");
+        System.out.println(" Productos con stock bajo (< stockMinimo):");
         productoDao.obtenerConStockBajo().forEach(p ->
                 System.out.println("  ⚠️  " + p.getCodigo() + " | Stock: " + p.getExistencias() +
                         " | Mínimo: " + p.getStockMinimo())
         );
 
-        System.out.println("\n💰 Total de ventas confirmadas HOY:");
+        System.out.println("\n Total de ventas confirmadas HOY:");
         BigDecimal total = ventaDao.calcularTotalVentasDia(LocalDate.now());
         System.out.println("  $ " + total);
     }
 
     private static void transaccionesAtomicas() {
-        System.out.println("\n🟢 CASO 1: CONFIRMACIÓN EXITOSA (stock suficiente)");
-        ventaService.confirmarVenta(1L);
+        System.out.println("\n CASO 1: CONFIRMACIÓN EXITOSA (stock suficiente)");
+        ventaService.confirmarVenta(3L);
 
-        System.out.println("\n🔴 CASO 2: INTENTO DE CONFIRMACIÓN FALLIDA (stock insuficiente)");
-        ventaService.confirmarVenta(1L); // Intento 2 debería fallar
+        System.out.println("\n CASO 2: INTENTO DE CONFIRMACIÓN FALLIDA (stock insuficiente)");
+        ventaService.confirmarVenta(3L); // Intento 2 debería fallar
     }
 
     private static void cascadaYHuerfanos() {
         System.out.println("🗑️  Eliminando línea de venta (orphanRemoval):");
         // Primero obtén una venta
         List<Venta> ventas = ventaDao.getAll();
-        if (!ventas.isEmpty() && !ventas.get(0).getDetalles().isEmpty()) {
+        if (!ventas.isEmpty() && !ventas.get(0).getDetalleVentas().isEmpty()) {
             Long ventaId = ventas.get(0).getId();
-            Long lineaId = ventas.get(0).getDetalles().get(0).getId();
+            Long lineaId = ventas.get(0).getDetalleVentas().get(0).getId();
             ventaService.eliminarLineaVenta(ventaId, lineaId);
+        } else {
+            System.out.println("  ️  No hay detalles de venta disponibles");
         }
 
         System.out.println("\n🗑️  Eliminando venta completa (CascadeType.ALL):");
+        ventas = ventaDao.getAll(); // Recargar ventas después de eliminaciones
         if (!ventas.isEmpty()) {
             ventaService.eliminarVenta(ventas.get(0).getId());
+        } else {
+            System.out.println("  ⚠️  No hay ventas disponibles para eliminar");
         }
     }
 
@@ -232,7 +247,7 @@ public class Main {
 
             System.out.println("├─ DETALLES ─────────────────────────────");
             BigDecimal totalDetalle = BigDecimal.ZERO;
-            for (DetalleVenta d : v.getDetalles()) {
+            for (DetalleVenta d : v.getDetalleVentas()) {
                 BigDecimal importe = d.getPrecioVenta()
                         .multiply(new BigDecimal(d.getCantidad()))
                         .subtract(d.getDescuento());
