@@ -119,6 +119,5 @@ public class VentaDaoImpl implements IVentaDAO {
             List<Venta> lista = query.getResultList();
             return Optional.ofNullable(lista);
         }
-
     }
 }

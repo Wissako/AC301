@@ -7,6 +7,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,5 +78,27 @@ public class ProductoDaoImpl implements IProductoDAO {
             return Optional.ofNullable(productos);
         }
     }
+
+    @Override
+    public BigDecimal calcularPromedio () {
+        String query = "SELECT AVG(p.precioRecomendado) FROM Producto p";
+        try (EntityManager em = emf.createEntityManager()) {
+            Double resultado = em.createQuery(query, Double.class)
+                    .getSingleResult();
+            return resultado != null ? BigDecimal.valueOf(resultado) : BigDecimal.ZERO;
+        }
+    }
+
+    @Override
+    public List<Producto> masCarosQueLaMedia() {
+        String query = "SELECT p FROM Producto p " +
+                "WHERE p.precioRecomendado > " +
+                "(SELECT AVG(p2.precioRecomendado) FROM Producto p2)";
+        try (EntityManager em = emf.createEntityManager()) {
+            return em.createQuery(query, Producto.class)
+                    .getResultList();
+        }
+    }
+
 
 }

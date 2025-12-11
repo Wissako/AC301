@@ -36,6 +36,25 @@ public class ClienteDaoImpl implements IClienteDAO {
     }
 
     @Override
+    public List<Cliente> compra2023No2024() {
+        String query = "SELECT DISTINCT c FROM Cliente c " +
+                "WHERE c.id IN (" +
+                "    SELECT v1.cliente.id FROM Venta v1 " +
+                "    WHERE YEAR(v1.fechaVenta) = 2023" +
+                ") " +
+                "AND c.id NOT IN (" +
+                "    SELECT v2.cliente.id FROM Venta v2 " +
+                "    WHERE YEAR(v2.fechaVenta) = 2024" +
+                ") " +
+                "AND LOWER(c.direccionHabitual) LIKE LOWER(CONCAT('%','%madrid%','%'))";
+
+        try (EntityManager em = emf.createEntityManager()) {
+            return em.createQuery(query, Cliente.class)
+                    .getResultList();
+        }
+    }
+
+    @Override
     public List<Cliente> getAll() {
 
         try(EntityManager em = emf.createEntityManager()) {

@@ -51,8 +51,6 @@ public class Producto {
     @Column(name = "stock_minimo", nullable = false)
     private Integer stockMinimo;
 
-
-
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "producto")
